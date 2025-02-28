@@ -1,8 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  // Add more fields as per your user object structure
+}
+
 interface AuthState {
   token: string | null;
-  user: any;
+  user: User | null;
 }
 
 const initialState: AuthState = {
@@ -14,7 +21,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ token: string; user: any }>) => {
+    login: (state, action: PayloadAction<{ token: string; user: User }>) => {
       state.token = action.payload.token;
       state.user = action.payload.user;
       localStorage.setItem("token", action.payload.token);
