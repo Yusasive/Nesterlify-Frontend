@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { HiX, HiEye, HiEyeOff } from "react-icons/hi";
 import Button from "../resuable/Button";
+import Link from "next/link";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,7 +15,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -30,15 +30,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Semi-transparent backdrop */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose} // Clicking outside modal closes it
+        onClick={onClose}
       />
 
-      {/* Modal Content */}
       <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 z-50">
-        {/* Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-600"
           onClick={onClose}
@@ -46,7 +43,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <HiX size={24} />
         </button>
 
-        {/* Toggle Login/Signup */}
         <div className="flex justify-center space-x-4 text-lg font-medium mb-4">
           <button
             className={`${isLogin ? "text-orange-500" : "text-gray-500"}`}
@@ -66,9 +62,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {isLogin ? "Welcome back!" : "Create an account"}
         </h2>
 
-        {/* Auth Form */}
         <form className="space-y-4">
-          {/* Email Field */}
           <div>
             <label className="text-gray-700 text-sm font-medium">Email</label>
             <input
@@ -78,7 +72,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             />
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="text-gray-700 text-sm font-medium">
               Password
@@ -99,7 +92,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
           </div>
 
-          {/* Confirm Password Field (Only for Signup) */}
           {!isLogin && (
             <div>
               <label className="text-gray-700 text-sm font-medium">
@@ -126,16 +118,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
           )}
 
-          {/* Forgot Password Link (Only for Login) */}
           {isLogin && (
             <div className="text-right text-sm">
-              <a href="#" className="text-blue-600 hover:underline">
+              <Link href="/" className="text-blue-600 hover:underline">
                 Forgot password?
-              </a>
+              </Link>
             </div>
           )}
 
-          {/* Submit Button */}
           <Button variant="primary" className="w-full">
             {isLogin ? "Log in" : "Sign up"}
           </Button>

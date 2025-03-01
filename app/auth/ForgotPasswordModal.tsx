@@ -15,7 +15,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [otpOpen, setOtpOpen] = useState(false);
-  const [email, setEmail] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>(""); 
 
   const {
     register,
@@ -46,6 +46,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              aria-label="Close modal"
             >
               <X size={20} />
             </button>
@@ -53,10 +54,14 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               Forgot Password
             </h2>
             <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-              <label className="block text-sm font-medium text-[#2C2C2C]">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-[#2C2C2C]"
+              >
                 Email*
               </label>
               <input
+                id="email"
                 type="email"
                 {...register("email", {
                   required: "Email is required",

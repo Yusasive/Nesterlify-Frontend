@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { HiX } from "react-icons/hi";
 import AuthForm from "@/components/auth/AuthForm";
 import ForgotPasswordModal from "@/app/auth/ForgotPasswordModal";
@@ -51,13 +52,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {!isLogin && (
             <p className="text-sm text-[#4B4B4B] mt-2">
               By clicking Sign in you agree with our{" "}
-              <a href="/" className="text-[#F05A1B]">
+              <Link href="/" className="text-[#F05A1B]">
                 terms and condition
-              </a>{" "}
+              </Link>{" "}
               and{" "}
-              <a href="/" className="text-[#F05A1B]">
+              <Link href="/" className="text-[#F05A1B]">
                 privacy policy
-              </a>
+              </Link>
             </p>
           )}
 

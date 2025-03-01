@@ -19,7 +19,6 @@ export default function OtpVerification({ mode }: OtpVerificationProps) {
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
