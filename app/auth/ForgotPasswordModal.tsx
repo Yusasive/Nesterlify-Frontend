@@ -23,20 +23,22 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
     formState: { errors },
   } = useForm<{ email: string }>();
 
-  const onSubmit = async (data: { email: string }) => {
-    setLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+ const onSubmit = async (data: { email: string }) => {
+   setLoading(true);
+   try {
+     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toast.success("Password reset OTP sent to your email!");
-      setEmail(data.email);
-      setOtpOpen(true);
-    } catch (error) {
-      toast.error("Something went wrong. Please try again!");
-    } finally {
-      setLoading(false);
-    }
-  };
+     toast.success("Password reset OTP sent to your email!");
+     setEmail(data.email);
+     setOtpOpen(true);
+   } catch (error) {
+     console.error("Something went wrong:", error); // Now using `error`
+     toast.error("Something went wrong. Please try again!");
+   } finally {
+     setLoading(false);
+   }
+ };
+
 
   return (
     <>

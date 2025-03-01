@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import OtpInput from "@/components/auth/OtpInput";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import SuccessModal from "./SuccessModal";
@@ -36,13 +36,21 @@ export default function OtpVerification({ mode }: OtpVerificationProps) {
 
     try {
       // Simulate API call
-      await new Promise((resolve, reject) =>
-        setTimeout(() => {
-          otp === "123456"
-            ? resolve("OTP Verified")
-            : reject(new Error("Invalid OTP"));
-        }, 1500)
-      );
+      try {
+        const result = await new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (otp === "123456") {
+              resolve("OTP Verified");
+            } else {
+              reject(new Error("Invalid OTP"));
+            }
+          }, 1500);
+        });
+
+        console.log(result);
+      } catch (error) {
+        console.error("Error occurs", error);
+      }
 
       toast.success("OTP Verified Successfully!");
       if (mode === "register") {

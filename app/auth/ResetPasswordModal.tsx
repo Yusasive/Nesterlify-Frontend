@@ -21,10 +21,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
     formState: { errors },
   } = useForm<{ password: string; confirmPassword: string }>();
 
-  const onSubmit = async (data: {
-    password: string;
-    confirmPassword: string;
-  }) => {
+  const onSubmit = async () => {
     setLoading(true);
     try {
       // Simulate API request
@@ -33,6 +30,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
       toast.success("Password reset successfully!");
       setShowSuccessModal(true);
     } catch (error) {
+      console.error("Something went wrong, Please try again!", error);
       toast.error("Something went wrong. Please try again!");
     } finally {
       setLoading(false);
