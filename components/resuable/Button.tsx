@@ -31,7 +31,7 @@ export default function Button({
   };
 
   const sizeStyles = {
-    sm: "px-4 py-3",
+    sm: "px-5 py-3",
     md: "px-6 py-3",
     lg: "px-24 py-4",
   };
