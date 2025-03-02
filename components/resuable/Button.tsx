@@ -25,14 +25,15 @@ export default function Button({
       "bg-[#F05A1B] text-white text-base font-medium rounded-lg hover:bg-orange-600",
     secondary:
       "bg-[#FFFFFF] text-[#3F3F3F] text-base font-medium border-[#F05A1B] border-2 rounded-lg hover:bg-gray-100",
-    outline: "border border-gray-300 text-gray-800 hover:bg-gray-100",
+    outline:
+      "bg-[#F05A1B] text-white text-base font-medium rounded-lg hover:bg-orange-600",
     ghost: "text-gray-800 hover:bg-gray-100",
   };
 
   const sizeStyles = {
     sm: "px-4 py-3",
     md: "px-6 py-3",
-    lg: "px-5 py-3",
+    lg: "px-24 py-4",
   };
 
   return (

@@ -44,7 +44,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
 
-  const getCurrencyIcon = (code: string) => fiatIcons[code] || <FaDollarSign />; // Default icon
+  const getCurrencyIcon = (code: string) => fiatIcons[code] || <FaDollarSign />; 
 
   const fiats = currencyCodes.data.map((currency) => ({
     code: currency.code,
@@ -90,7 +90,7 @@ export default function Navbar() {
               </span>
             </div>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-20 bg-white border rounded shadow-lg max-h-60 overflow-y-auto z-50">
+              <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg max-h-60 overflow-y-auto z-50">
                 {fiats.map((fiat) => (
                   <div
                     key={fiat.code}
@@ -148,7 +148,7 @@ export default function Navbar() {
               </button>
               <button
                 className="bg-orange-500 px-4 py-2 rounded text-white hover:bg-orange-600"
-                onClick={() => setAuthOpen(true)}
+                onClick={() => setAuthOpen(true) }
               >
                 Sign up
               </button>

@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import { FaPlane, FaHotel, FaCar, FaSpa, FaMapMarkerAlt } from "react-icons/fa";
-import AirTravel from "@/components/homepage/tabPanel/AirTravel";
-import Hotels from "@/components/homepage/tabPanel/Hotels";
-import Cars from "@/components/homepage/tabPanel/Cars";
-import Vacations from "@/components/homepage/tabPanel/Vacations";
-import Tracking from "@/components/homepage/tabPanel/Tracking";
+import AirTravel from "@/components/tabPanel/AirTravel";
+import Hotels from "@/components/tabPanel/Hotels";
+import Cars from "@/components/tabPanel/Cars";
+import Vacations from "@/components/tabPanel/Vacations";
+import Tracking from "@/components/tabPanel/Tracking";
 
 const tabs = [
   { id: "air", name: "Air Travels", icon: <FaPlane /> },
