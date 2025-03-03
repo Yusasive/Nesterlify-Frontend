@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
@@ -9,11 +9,11 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const tripTypes = ["One way", "Round trip", "Multi-city"];
 
-export default function FlightSearchForm() {
+export default function FlightSearchForm() {  
   const [tripType, setTripType] = useState("Round trip");
   const [departureDate, setDepartureDate] = useState<Date | null>(new Date());
   const [returnDate, setReturnDate] = useState<Date | null>(new Date());
-  const [passengers, setPassengers] = useState({ adults: 1, children: 0 });
+  const [passengers] = useState({ adults: 1, children: 0 });
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-3">

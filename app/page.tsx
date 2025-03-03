@@ -3,6 +3,9 @@ import Explore from "@/components/homepage/Explore";
 import Services from "@/components/homepage/Services";
 import TravelTips from "@/components/homepage/TravelTips";
 import WhyNesterlify from "@/components/homepage/WhyNesterlify";
+import GlobalSponsors from "@/components/homepage/GlobalSupport";
+import TestimonialSlider from "@/components/homepage/TestimonailSlider";
+import Future from "@/components/homepage/Future";
 
 export default function Home() {
   return (
@@ -12,6 +15,9 @@ export default function Home() {
       <Services />
       <TravelTips />
       <WhyNesterlify />
+      <GlobalSponsors />
+      <TestimonialSlider />
+      <Future />
     </div>
   );
 }
