@@ -20,7 +20,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center z-[9999]">
-        <div className="bg-white rounded-lg shadow-2xl w-full max-w-md p-6 relative">
+        <div className="bg-white rounded-lg shadow-2xl w-full max-w-md p-6 py-10 relative">
           <button
             className="absolute top-4 right-4 text-gray-600"
             onClick={onClose}
@@ -28,7 +28,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <HiX size={24} />
           </button>
 
-          <div className="flex justify-center space-x-24 text-sm font-medium mb-4">
+          <div className="flex justify-center space-x-24 text-base font-medium mb-4">
             <button
               className={isLogin ? "text-[#7F7F7F]" : "text-[#F05A1B]"}
               onClick={() => setIsLogin(false)}
@@ -43,7 +43,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </button>
           </div>
 
-          <h2 className="text-center text-lg font-medium text-[#2C2C2C] mb-4">
+          <h2 className="text-center text-lg font-bold text-[#2C2C2C] mb-4">
             {isLogin ? "Welcome back!" : "Create an account"}
           </h2>
 

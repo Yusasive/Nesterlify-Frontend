@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "./InputField";
 import PasswordField from "./PasswordField";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import OtpVerification from "@/app/auth/OTPModal";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -26,6 +27,7 @@ export default function AuthForm({ isLogin, onClose }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [authenticated, setAuthenticated] = useState(false);
 
   const {
     register,
@@ -34,65 +36,70 @@ export default function AuthForm({ isLogin, onClose }: AuthFormProps) {
     formState: { errors },
   } = useForm<AuthFormInputs>();
 
-const onSubmit = async (data: AuthFormInputs) => {
-  setLoading(true);
-  try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    if (!API_URL) {
-      throw new Error("API URL is missing. Check environment variables.");
-    }
+  const router = useRouter();
 
-    const url = isLogin ? `${API_URL}/auth/signin/` : `${API_URL}/auth/signup/`;
-    const payload = isLogin
-      ? { emailOrUsername: data.emailOrUsername, password: data.password }
-      : {
-          fullName: data.fullName,
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        };
+  const onSubmit = async (data: AuthFormInputs) => {
+    setLoading(true);
 
-    const response = await axios.post<{ token?: string; message?: string }>(
-      url,
-      payload,
-      {
-        headers: { "Content-Type": "application/json" },
+    try {
+      const url = isLogin
+        ? "/api/auth?authType=signin"
+        : "/api/auth?authType=signup";
+
+      const payload = isLogin
+        ? { emailOrUsername: data.emailOrUsername, password: data.password }
+        : {
+            fullName: data.fullName,
+            username: data.username,
+            email: data.email,
+            password: data.password,
+          };
+
+      const response = await axios.post<{
+        token?: string;
+        message?: string;
+        requiresOtp?: boolean;
+      }>(url, payload, { headers: { "Content-Type": "application/json" } });
+
+      console.log("API Response:", response.data);
+      toast.success(
+        isLogin ? "Login successful!" : "Signup successful! Check your email."
+      );
+
+      if (isLogin && response.data.token) {
+        console.log("Login successful, saving token...");
+        localStorage.setItem("token", response.data.token);
+        setAuthenticated(true);
+      } else if (!isLogin) {
+        console.log("Signup successful, opening OTP modal...");
+        setRegisteredEmail(data.email ?? "");
+        setShowOtpModal(true);
       }
-    );
-
-    toast.success(
-      isLogin ? "Login successful!" : "Signup successful! Check your email."
-    );
-
-    if (isLogin && response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      onClose();
-      window.location.href = "/dashboard";
-    } else if (!isLogin) {
-      setRegisteredEmail(data.email || "");
-      setShowOtpModal(true);
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      console.error("Auth Error:", errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error: unknown) {
-    let errorMessage = "An unexpected error occurred.";
+  };
 
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (typeof error === "string") {
-      errorMessage = error;
-    } else {
-      errorMessage = "An unknown error occurred.";
+  useEffect(() => {
+    if (authenticated) {
+      console.log("Redirecting to dashboard...");
+      router.push("/dashboard");
     }
-
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  }, [authenticated]);
 
   return (
     <>
       {!showOtpModal ? (
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {isLogin ? (
             <InputField
               label="Email/Username"

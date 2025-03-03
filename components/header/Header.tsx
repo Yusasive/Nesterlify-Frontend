@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, JSX } from "react";
+import { useState, useEffect, JSX } from "react";
 import { usePathname } from "next/navigation";
 import { HiMenu, HiX } from "react-icons/hi";
 import Logo from "@/public/images/logo.png";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "../resuable/Button";
 import AuthModal from "@/app/auth/AuthModal";
+import UserNav from "./NavBar"; 
 import currencyCodes from "currency-codes";
 import {
   FaDollarSign,
@@ -31,36 +32,46 @@ const fiatIcons: Record<string, JSX.Element> = {
   JPY: <FaYenSign />,
 };
 
-export default function Navbar() {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [selectedFiat, setSelectedFiat] = useState<{
-    code: string;
-    icon: JSX.Element;
-  }>({
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedFiat, setSelectedFiat] = useState({
     code: "USD",
     icon: <FaDollarSign />,
   });
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const pathname = usePathname();
 
-  const getCurrencyIcon = (code: string) => fiatIcons[code] || <FaDollarSign />; 
+  useEffect(() => {
+    const user = localStorage.getItem("user"); 
+    setIsLoggedIn(!!user);
+  }, []);
+
+  const getCurrencyIcon = (code: string) => fiatIcons[code] || <FaDollarSign />;
 
   const fiats = currencyCodes.data.map((currency) => ({
     code: currency.code,
     icon: getCurrencyIcon(currency.code),
   }));
 
+  const handleAuthOpen = () => {
+    setAuthOpen(true);
+    setMenuOpen(false);
+  };
+
   return (
     <>
-      <nav className="bg-white shadow-md">
-        <div className="flex items-center justify-between py-4 px-2 md:px-32">
+      <nav className="bg-white shadow-md ">
+        <div className="flex items-center justify-between py-4 px-6 lg:px-0 md:w-[90%] mx-auto">
           <div className="flex items-center space-x-2">
             <Link href="/">
               <Image src={Logo} alt="NesterlifyLogo" width={180} height={42} />
             </Link>
           </div>
 
+          {/* Desktop Nav Links */}
           <ul className="hidden md:flex space-x-6">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -112,23 +123,23 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Desktop: Auth Buttons or User Menu */}
           <div className="hidden md:flex space-x-4">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setAuthOpen(true)}
-            >
-              Sign in
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setAuthOpen(true)}
-            >
-              Sign up
-            </Button>
+            {isLoggedIn ? (
+              <UserNav />
+            ) : (
+              <>
+                <Button variant="secondary" size="sm" onClick={handleAuthOpen}>
+                  Sign in
+                </Button>
+                <Button variant="primary" size="sm" onClick={handleAuthOpen}>
+                  Sign up
+                </Button>
+              </>
+            )}
           </div>
 
+          {/* Mobile Hamburger Button */}
           <button
             className="md:hidden text-gray-600"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -137,22 +148,29 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden bg-white shadow-lg py-4">
-            <div className="mt-4 flex flex-col items-center space-y-3">
-              <button
-                className="border border-orange-500 px-4 py-2 rounded text-orange-500 hover:bg-orange-500 hover:text-white"
-                onClick={() => setAuthOpen(true)}
-              >
-                Sign in
-              </button>
-              <button
-                className="bg-orange-500 px-4 py-2 rounded text-white hover:bg-orange-600"
-                onClick={() => setAuthOpen(true) }
-              >
-                Sign up
-              </button>
-            </div>
+            {isLoggedIn ? (
+              <div className="mt-4 flex flex-col items-center space-y-3">
+                <UserNav />
+              </div>
+            ) : (
+              <div className="mt-4 flex flex-col items-center space-y-3">
+                <button
+                  className="border border-orange-500 px-4 py-2 rounded text-orange-500 hover:bg-orange-500 hover:text-white"
+                  onClick={handleAuthOpen}
+                >
+                  Sign in
+                </button>
+                <button
+                  className="bg-orange-500 px-4 py-2 rounded text-white hover:bg-orange-600"
+                  onClick={handleAuthOpen}
+                >
+                  Sign up
+                </button>
+              </div>
+            )}
           </div>
         )}
       </nav>

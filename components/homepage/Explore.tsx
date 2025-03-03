@@ -4,13 +4,13 @@ import Image from "next/image";
 
 const Explore = () => {
   return (
-    <section className="w-full py-24 md:py-12">
+    <section className="w-full py-16 px-6 lg:px-0 md:w-[90%] mx-auto">
       <div className="w-30 lg:w-42 h-1 bg-[#F05A1B] mx-auto mb-2"></div>
       <h3 className="mb-12 text-center text-[#2C2C2C] font-medium text-2xl lg:text-[50.94px] ">
         Explore <br /> Worldwide Destinations
       </h3>
 
-      <div className="w-[90%] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className=" flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="w-full md:w-[48%] flex items-center justify-between p-4 md:p-8 bg-[#F05A1B] rounded-2xl">
           <div className="flex flex-col">
             <h4 className="text-white text-xl md:text-[44px] font-bold text-center">
@@ -30,7 +30,7 @@ const Explore = () => {
         </div>
 
         <div
-          className="w-full md:w-[48%] py-8 md:py-0 flex items-center justify-between p-4 md:p-8 bg-[#F05A1B] rounded-2xl"
+          className="w-full md:w-[48%] py-8 flex items-center justify-between p-4 md:p-8 bg-[#F05A1B] rounded-2xl"
           style={{
             backgroundImage: `url('images/ts.png')`,
             backgroundPosition: "right",

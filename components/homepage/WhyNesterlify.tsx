@@ -38,7 +38,7 @@ const features = [
 
 const WhyNesterlify: React.FC = () => {
   return (
-    <section className="py-16 px-6 md:px-32 bg-gray-50">
+    <section className="py-16 px-6 lg:px-0 md:w-[90%] mx-auto bg-gray-50">
       <div className="">
         <div className="w-30 lg:w-42 h-1 bg-[#F05A1B] mx-auto mb-2"></div>
         <h2 className="text-xl lg:text-[44px] text-[#2C2C2C] font-medium text-center mb-8">
