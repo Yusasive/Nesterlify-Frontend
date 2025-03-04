@@ -12,18 +12,17 @@ export default function OtpInput({ length, onComplete }: OtpInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // Only allow numbers
+    if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Move to next input if value is entered
     if (value && index < length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Check if OTP is complete
+
     if (newOtp.join("").length === length) {
       onComplete(newOtp.join(""));
     }

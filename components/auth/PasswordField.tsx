@@ -4,7 +4,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 
 interface PasswordFieldProps {
   label: string;
-  register: UseFormRegisterReturn; // Change the type to match the expected object structure
+  register: UseFormRegisterReturn; 
   error?: string;
 }
 
