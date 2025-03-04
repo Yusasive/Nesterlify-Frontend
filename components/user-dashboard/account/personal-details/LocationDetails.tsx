@@ -3,9 +3,18 @@ import { Country, State, City } from "country-state-city";
 import Dropdown from "./Dropdown";
 import EditableInput from "./EditableInput";
 
+interface LocationFormData {
+  nationality: string;
+  state: string;
+  city: string;
+  zipCode: string;
+  houseNumber: string;
+  houseAddress: string;
+}
+
 interface LocationDetailsProps {
-  formData: any;
-  handleChange: (field: string, value: string) => void;
+  formData: LocationFormData;
+  handleChange: (field: keyof LocationFormData, value: string) => void;
   isEditing: boolean;
 }
 
@@ -19,7 +28,6 @@ export default function LocationDetails({
   const [cities, setCities] = useState<string[]>([]);
 
   useEffect(() => {
-   
     const countryList = Country.getAllCountries().map(
       (country) => country.name
     );
@@ -36,7 +44,7 @@ export default function LocationDetails({
           (state) => state.name
         );
         setStates(stateList);
-        setCities([]); 
+        setCities([]);
       }
     }
   }, [formData.nationality]);
@@ -77,7 +85,7 @@ export default function LocationDetails({
           value={formData.state}
           onChange={(val) => handleChange("state", val)}
           isEditing={isEditing}
-          disabled={!formData.nationality} // Disable if no country selected
+          disabled={!formData.nationality}
         />
         <Dropdown
           label="City"
@@ -85,7 +93,7 @@ export default function LocationDetails({
           value={formData.city}
           onChange={(val) => handleChange("city", val)}
           isEditing={isEditing}
-          disabled={!formData.state} // Disable if no state selected
+          disabled={!formData.state}
         />
         <EditableInput
           label="ZIP Code"

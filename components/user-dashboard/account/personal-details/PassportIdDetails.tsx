@@ -3,11 +3,19 @@ import countries from "world-countries";
 import Dropdown from "./Dropdown";
 import EditableInput from "./EditableInput";
 
+interface PassportIdDetailsFormData {
+  documentType: string;
+  issuedBy: string;
+  passportNumber: string;
+  passportExpiry: string;
+}
+
 interface PassportIdDetailsProps {
-  formData: any;
-  handleChange: (field: string, value: string) => void;
+  formData: PassportIdDetailsFormData;
+  handleChange: (field: keyof PassportIdDetailsFormData, value: string) => void;
   isEditing: boolean;
 }
+
 
 export default function PassportIdDetails({
   formData,

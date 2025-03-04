@@ -1,7 +1,16 @@
 import { Control, Controller } from "react-hook-form";
 
+interface LocationFormData {
+  nationality: string;
+  state: string;
+  city: string;
+  zip: string;
+  houseNumber: string;
+  houseAddress: string;
+}
+
 type Props = {
-  control: Control<any>;
+  control: Control<LocationFormData>;
 };
 
 const LocationInfo = ({ control }: Props) => {

@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Sidebar from "@/components/user-dashboard/Sidebar";
 import Providers from "@/app/user-dashboard/providers";
+
+export const metadata: Metadata = {
+  title: "Nesterlify Users' Dashboard",
+  description: "The dashboard for users of Nesterlify",
+};
 
 export default function DashboardLayout({
   children,

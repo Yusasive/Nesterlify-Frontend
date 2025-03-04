@@ -1,10 +1,10 @@
 interface DropdownProps {
   label: string;
   options: string[];
-  value: any;
+  value: string | number | undefined;
   onChange: (val: string) => void;
   isEditing: boolean;
-  disabled?: boolean; 
+  disabled?: boolean;
 }
 
 export default function Dropdown({

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const urlParams = new URL(req.url).searchParams;
-  const authType = urlParams.get("authType"); 
+  const authType = urlParams.get("authType");
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_URL) {
@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error("Error in auth route:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

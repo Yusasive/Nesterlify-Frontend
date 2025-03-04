@@ -2,11 +2,24 @@ import Dropdown from "./Dropdown";
 import EditableInput from "./EditableInput";
 import PhoneInput from "./PhoneInput";
 
+interface PersonalDetailsFormData {
+  title: string;
+  gender: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string; 
+  email: string;
+  dob: string;
+  phone: string;
+}
+
+
 interface PersonalDetailsProps {
-  formData: any;
-  handleChange: (field: string, value: string) => void;
+  formData: PersonalDetailsFormData;
+  handleChange: (field: keyof PersonalDetailsFormData, value: string) => void;
   isEditing: boolean;
 }
+
 
 export default function PersonalDetails({
   formData,
@@ -47,11 +60,12 @@ export default function PersonalDetails({
         />
         <EditableInput
           label="Middle name"
-          value={formData.middleName}
+          value={formData.middleName ?? ""} 
           onChange={(val) => handleChange("middleName", val)}
           isEditing={isEditing}
           optional
         />
+
         <EditableInput
           label="Email address"
           value={formData.email}

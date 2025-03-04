@@ -15,17 +15,90 @@ interface User {
   email: string;
 }
 
+interface PersonalDetailsFormData {
+  title: string;
+  gender: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  dob: string;
+  phone: string;
+}
+
+interface LocationFormData {
+  nationality: string;
+  state: string;
+  city: string;
+  zipCode: string;
+  houseNumber: string;
+  houseAddress: string;
+}
+
+interface PassportIdFormData {
+  documentType: string;
+  issuedBy: string;
+  passportNumber: string;
+  passportExpiry: string;
+}
+
+type FullProfileFormData = User &
+  PersonalDetailsFormData &
+  LocationFormData &
+  PassportIdFormData;
+
 export default function PersonalDetailsForm() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  const token = useSelector((state: RootState) => state.auth.token) || ""; 
+  const token = useSelector((state: RootState) => state.auth.token) || "";
 
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<User>(
-    user || { id: "", name: "", email: "" } 
+  const [formData, setFormData] = useState<FullProfileFormData>(
+    user
+      ? {
+          ...user,
+          title: "",
+          gender: "",
+          firstName: "",
+          lastName: "",
+          middleName: "",
+          dob: "",
+          phone: "",
+          nationality: "",
+          state: "",
+          city: "",
+          zipCode: "",
+          houseNumber: "",
+          houseAddress: "",
+          documentType: "",
+          issuedBy: "",
+          passportNumber: "",
+          passportExpiry: "",
+        }
+      : {
+          id: "",
+          name: "",
+          email: "",
+          title: "",
+          gender: "",
+          firstName: "",
+          lastName: "",
+          middleName: "",
+          dob: "",
+          phone: "",
+          nationality: "",
+          state: "",
+          city: "",
+          zipCode: "",
+          houseNumber: "",
+          houseAddress: "",
+          documentType: "",
+          issuedBy: "",
+          passportNumber: "",
+          passportExpiry: "",
+        }
   );
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof FullProfileFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
