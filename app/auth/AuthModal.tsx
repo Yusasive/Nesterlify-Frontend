@@ -47,7 +47,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {isLogin ? "Welcome back!" : "Create an account"}
           </h2>
 
-          <AuthForm isLogin={isLogin} onClose={onClose} />
+          <AuthForm isLogin={isLogin} />
 
           {!isLogin && (
             <p className="text-sm text-[#4B4B4B] mt-2">

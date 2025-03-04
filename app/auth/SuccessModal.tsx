@@ -16,7 +16,7 @@ const SuccessModal = ({ mode }: SuccessModalProps) => {
     setLoading(true);
 
     if (mode === "register") {
-      router.push("/dashboard");
+      router.push("/user-dashboard");
     } else if (mode === "forgot-password") {
       router.push("/login");
     }

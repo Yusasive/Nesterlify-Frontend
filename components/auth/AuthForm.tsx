@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "./InputField";
 import PasswordField from "./PasswordField";
@@ -8,10 +8,10 @@ import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import OtpVerification from "@/app/auth/OTPModal";
 import { useRouter } from "next/navigation";
+import { AuthResponse } from "@/types/auth";
 
 interface AuthFormProps {
   isLogin: boolean;
-  onClose: () => void;
 }
 
 interface AuthFormInputs {
@@ -23,11 +23,11 @@ interface AuthFormInputs {
   confirmPassword?: string;
 }
 
-export default function AuthForm({ isLogin, onClose }: AuthFormProps) {
+export default function AuthForm({ isLogin }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
-  const [authenticated, setAuthenticated] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -35,8 +35,6 @@ export default function AuthForm({ isLogin, onClose }: AuthFormProps) {
     watch,
     formState: { errors },
   } = useForm<AuthFormInputs>();
-
-  const router = useRouter();
 
   const onSubmit = async (data: AuthFormInputs) => {
     setLoading(true);
@@ -55,46 +53,52 @@ export default function AuthForm({ isLogin, onClose }: AuthFormProps) {
             password: data.password,
           };
 
-      const response = await axios.post<{
-        token?: string;
-        message?: string;
-        requiresOtp?: boolean;
-      }>(url, payload, { headers: { "Content-Type": "application/json" } });
+      const response = await axios.post<AuthResponse>(url, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      console.log("API Response:", response.data);
+      console.log("Full API Response:", response);
+
       toast.success(
         isLogin ? "Login successful!" : "Signup successful! Check your email."
       );
 
-      if (isLogin && response.data.token) {
+      if (isLogin && response.data.data?.token) {
         console.log("Login successful, saving token...");
-        localStorage.setItem("token", response.data.token);
-        setAuthenticated(true);
+        localStorage.setItem("token", response.data.data.token);
+        toast.success("Redirecting to dashboard...");
+        router.push("/user-dashboard");
       } else if (!isLogin) {
         console.log("Signup successful, opening OTP modal...");
         setRegisteredEmail(data.email ?? "");
         setShowOtpModal(true);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = "An unexpected error occurred.";
-      if (error.response?.data?.message) {
+
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "data" in error.response &&
+        typeof error.response.data === "object" &&
+        error.response.data !== null &&
+        "message" in error.response.data &&
+        typeof error.response.data.message === "string"
+      ) {
         errorMessage = error.response.data.message;
-      } else if (error.message) {
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       console.error("Auth Error:", errorMessage);
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (authenticated) {
-      console.log("Redirecting to dashboard...");
-      router.push("/dashboard");
-    }
-  }, [authenticated]);
 
   return (
     <>
@@ -163,8 +167,10 @@ export default function AuthForm({ isLogin, onClose }: AuthFormProps) {
               label="Confirm Password"
               register={register("confirmPassword", {
                 required: "Please confirm your password",
-                validate: (value) =>
-                  value === watch("password") || "Passwords do not match",
+                validate: (value) => {
+                  const password = watch("password");
+                  return password === value || "Passwords do not match";
+                },
               })}
               error={errors.confirmPassword?.message}
             />
