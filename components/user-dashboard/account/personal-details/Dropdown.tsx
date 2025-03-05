@@ -30,7 +30,7 @@ export default function Dropdown({
           ))}
         </select>
       ) : (
-        <p className="w-full px-3 py-3 border text-gray-500 rounded-md bg-gray-100">
+        <p className="w-full px-3 py-5 border text-gray-500 rounded-md bg-gray-100">
           {value}
         </p>
       )}

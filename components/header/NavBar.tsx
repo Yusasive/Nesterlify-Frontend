@@ -14,7 +14,7 @@ export default function UserNav() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   return (
-    <div className="relative">
+    <div className="relative flex md:hidden">
       <button
         className="text-gray-600"
         onClick={() => setUserMenuOpen(!userMenuOpen)}

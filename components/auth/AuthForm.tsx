@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import OtpVerification from "@/app/auth/OTPModal";
 import { useRouter } from "next/navigation";
 import { AuthResponse } from "@/types/auth";
+import { login } from "@/app/features/auth/authSlice";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -64,8 +65,29 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
       );
 
       if (isLogin && response.data.data?.token) {
-        console.log("Login successful, saving token...");
-        localStorage.setItem("token", response.data.data.token);
+        const userData = response.data.data.user || {}; 
+        const token = response.data.data.token;
+
+       const formattedUser = {
+         _id: userData._id, 
+         username: userData.username,
+         fullName: userData.fullName, 
+         email: userData.email,
+         role: userData.role,
+         profilePicture: userData.profilePicture || "",
+         isBlocked: userData.isBlocked,
+         emailNotification: userData.emailNotification,
+         twoFa: userData.twoFa,
+       };
+
+
+        console.log("Formatted User Data for Redux:", formattedUser);
+        console.log("Extracted Token:", token);
+        localStorage.setItem("user", JSON.stringify(formattedUser));
+        localStorage.setItem("token", token);
+
+        dispatch(login({ token, user: formattedUser }));
+
         toast.success("Redirecting to dashboard...");
         router.push("/user-dashboard");
       } else if (!isLogin) {
@@ -196,4 +218,7 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
       )}
     </>
   );
+}
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
 }

@@ -7,19 +7,17 @@ interface PersonalDetailsFormData {
   gender: string;
   firstName: string;
   lastName: string;
-  middleName?: string; 
+  middleName?: string;
   email: string;
-  dob: string;
-  phone: string;
+  dateOfBirth: string; 
+  phoneNumber: string;
 }
-
 
 interface PersonalDetailsProps {
   formData: PersonalDetailsFormData;
   handleChange: (field: keyof PersonalDetailsFormData, value: string) => void;
   isEditing: boolean;
 }
-
 
 export default function PersonalDetails({
   formData,
@@ -60,7 +58,7 @@ export default function PersonalDetails({
         />
         <EditableInput
           label="Middle name"
-          value={formData.middleName ?? ""} 
+          value={formData.middleName ?? ""}
           onChange={(val) => handleChange("middleName", val)}
           isEditing={isEditing}
           optional
@@ -73,14 +71,14 @@ export default function PersonalDetails({
         />
         <EditableInput
           label="Date of birth"
-          value={formData.dob}
-          onChange={(val) => handleChange("dob", val)}
+          value={formData.dateOfBirth}
+          onChange={(val) => handleChange("dateOfBirth", val)}
           isEditing={isEditing}
           type="date"
         />
         <PhoneInput
-          value={formData.phone}
-          onChange={(val) => handleChange("phone", val)}
+          value={formData.phoneNumber}
+          onChange={(val) => handleChange("phoneNumber", val)}
           isEditing={isEditing}
         />
       </div>

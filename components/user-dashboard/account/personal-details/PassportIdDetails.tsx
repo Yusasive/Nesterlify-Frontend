@@ -4,10 +4,10 @@ import Dropdown from "./Dropdown";
 import EditableInput from "./EditableInput";
 
 interface PassportIdDetailsFormData {
-  documentType: string;
-  issuedBy: string;
-  passportNumber: string;
-  passportExpiry: string;
+  documenttype: string;
+  issuedby: string;
+  passportNo: string;
+  passportExpiryDate: string;
 }
 
 interface PassportIdDetailsProps {
@@ -38,27 +38,27 @@ export default function PassportIdDetails({
         <Dropdown
           label="Document type"
           options={["Passport", "National ID", "Driver's License"]}
-          value={formData.documentType}
-          onChange={(val) => handleChange("documentType", val)}
+          value={formData.documenttype}
+          onChange={(val) => handleChange("documenttype", val)}
           isEditing={isEditing}
         />
         <Dropdown
           label="Issued by"
-          options={countryOptions} 
-          value={formData.issuedBy}
-          onChange={(val) => handleChange("issuedBy", val)}
+          options={countryOptions}
+          value={formData.issuedby}
+          onChange={(val) => handleChange("issuedby", val)}
           isEditing={isEditing}
         />
         <EditableInput
           label="Passport number"
-          value={formData.passportNumber}
-          onChange={(val) => handleChange("passportNumber", val)}
+          value={formData.passportNo}
+          onChange={(val) => handleChange("passportNo", val)}
           isEditing={isEditing}
         />
         <EditableInput
           label="Passport expiry date"
-          value={formData.passportExpiry}
-          onChange={(val) => handleChange("passportExpiry", val)}
+          value={formData.passportExpiryDate}
+          onChange={(val) => handleChange("passportExpiryDate", val)}
           isEditing={isEditing}
           type="date"
         />

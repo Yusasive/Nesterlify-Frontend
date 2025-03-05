@@ -7,8 +7,8 @@ interface LocationFormData {
   nationality: string;
   state: string;
   city: string;
-  zipCode: string;
-  houseNumber: string;
+  zipcode: string;
+  houseNo: string;
   houseAddress: string;
 }
 
@@ -97,14 +97,14 @@ export default function LocationDetails({
         />
         <EditableInput
           label="ZIP Code"
-          value={formData.zipCode}
-          onChange={(val) => handleChange("zipCode", val)}
+          value={formData.zipcode}
+          onChange={(val) => handleChange("zipcode", val)}
           isEditing={isEditing}
         />
         <EditableInput
           label="House number"
-          value={formData.houseNumber}
-          onChange={(val) => handleChange("houseNumber", val)}
+          value={formData.houseNo}
+          onChange={(val) => handleChange("houseNo", val)}
           isEditing={isEditing}
         />
         <EditableInput
