@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
-const BinancePowered = () => {
+const Binance = () => {
   const benefits = [
     "Accepting cryptocurrency payments for travel bookings through Binance Pay",
     "Facilitating the sending and receiving of digital assets",
@@ -99,4 +99,4 @@ const BinancePowered = () => {
   );
 };
 
-export default BinancePowered;
+export default Binance;
