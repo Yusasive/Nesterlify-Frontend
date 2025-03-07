@@ -26,6 +26,7 @@ export default function LocationDetails({
   const [countries, setCountries] = useState<string[]>([]);
   const [states, setStates] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
+  const { nationality, state } = formData;
 
   useEffect(() => {
     const countryList = Country.getAllCountries().map(
@@ -35,38 +36,49 @@ export default function LocationDetails({
   }, []);
 
   useEffect(() => {
-    if (formData.nationality) {
+    if (nationality) {
       const selectedCountry = Country.getAllCountries().find(
-        (c) => c.name === formData.nationality
+        (c) => c.name === nationality
       );
       if (selectedCountry) {
         const stateList = State.getStatesOfCountry(selectedCountry.isoCode).map(
-          (state) => state.name
+          (s) => s.name
         );
         setStates(stateList);
         setCities([]);
+      } else {
+        setStates([]);
       }
+    } else {
+      setStates([]);
     }
-  }, [formData.nationality]);
+  }, [nationality]);
 
   useEffect(() => {
-    if (formData.state) {
+    if (state && nationality) {
       const selectedCountry = Country.getAllCountries().find(
-        (c) => c.name === formData.nationality
+        (c) => c.name === nationality
       );
-      const selectedState = State.getStatesOfCountry(
-        selectedCountry?.isoCode || ""
-      ).find((s) => s.name === formData.state);
-
-      if (selectedCountry && selectedState) {
-        const cityList = City.getCitiesOfState(
-          selectedCountry.isoCode,
-          selectedState.isoCode
-        ).map((city) => city.name);
-        setCities(cityList);
+      if (selectedCountry) {
+        const selectedState = State.getStatesOfCountry(
+          selectedCountry.isoCode
+        ).find((s) => s.name === state);
+        if (selectedState) {
+          const cityList = City.getCitiesOfState(
+            selectedCountry.isoCode,
+            selectedState.isoCode
+          ).map((city) => city.name);
+          setCities(cityList);
+        } else {
+          setCities([]);
+        }
+      } else {
+        setCities([]);
       }
+    } else {
+      setCities([]);
     }
-  }, [formData.state]);
+  }, [state, nationality]);
 
   return (
     <div>

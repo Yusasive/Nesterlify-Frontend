@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define User Interface
-interface User {
+export interface User {
   _id: string;
   username: string;
   fullName: string;
@@ -11,9 +11,29 @@ interface User {
   isBlocked: boolean;
   emailNotification: boolean;
   twoFa: boolean;
+
+  // Additional user details from backend response
+  title: string;
+  gender: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  phoneNumber: string;
+  nationality: string;
+  birthPlace: string;
+  issuanceDate: string;
+  state: string;
+  city: string;
+  zipcode: string;
+  houseNo: string;
+  houseAddress: string;
+  documenttype: string;
+  issuedby: string;
+  passportNo: string;
+  passportExpiryDate: string;
+  dateOfBirth: string;
 }
 
-// Define Auth State Interface
 interface AuthState {
   token: string | null;
   user: User | null;
@@ -37,7 +57,6 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
 
-      // Store token & user in localStorage
       localStorage.setItem("token", action.payload.token);
       localStorage.setItem("user", JSON.stringify(action.payload.user));
     },
@@ -45,7 +64,6 @@ const authSlice = createSlice({
       state.token = null;
       state.user = null;
 
-      // Remove token & user from localStorage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     },
@@ -53,7 +71,6 @@ const authSlice = createSlice({
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
 
-        // Update user data in localStorage
         localStorage.setItem("user", JSON.stringify(state.user));
       }
     },

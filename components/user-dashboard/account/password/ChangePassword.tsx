@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { HiEye, HiEyeOff, HiChevronDown, HiChevronUp } from "react-icons/hi";
 import OTPVerification from "./OTPVerificationModal";
 
+type PasswordFormInputs = z.infer<typeof passwordSchema>;
+
 const passwordSchema = z
   .object({
     oldPassword: z.string().min(6, "Old password is required"),
@@ -25,7 +27,7 @@ export default function ChangePassword() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<PasswordFormInputs>({
     resolver: zodResolver(passwordSchema),
   });
 
@@ -36,17 +38,17 @@ export default function ChangePassword() {
   });
 
   const [isOpen, setIsOpen] = useState(false);
-  const [showOtpModal, setShowOtpModal] = useState(false); // ✅ Controls OTP modal visibility
+  const [showOtpModal, setShowOtpModal] = useState(false); 
 
   const togglePasswordVisibility = (field: "old" | "new" | "confirm") => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   // Handle password change
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: PasswordFormInputs) => {
     console.log("Password changed:", data);
     setTimeout(() => {
-      setShowOtpModal(true); // ✅ Show OTP modal
+      setShowOtpModal(true);
     }, 1000);
   };
 
@@ -76,7 +78,10 @@ export default function ChangePassword() {
         </h1>
 
         {isOpen && (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4 max-w-md">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6 mt-4 max-w-md"
+          >
             {/* Old Password */}
             <div>
               <label className="block text-sm text-[#2C2C2C] font-medium">

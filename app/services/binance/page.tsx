@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
 const Binance = () => {

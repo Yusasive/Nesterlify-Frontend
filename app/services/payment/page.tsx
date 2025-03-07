@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { paymentOptions } from "@/data/paymentOptions";
 import { FaTasks } from "react-icons/fa";
 

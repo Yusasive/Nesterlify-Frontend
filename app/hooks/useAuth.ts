@@ -1,13 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/app/store/store";
 import { login, logout } from "@/app/features/auth/authSlice";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  // Add any other fields your user object contains
-}
+import type { User } from "@/app/features/auth/authSlice";
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();

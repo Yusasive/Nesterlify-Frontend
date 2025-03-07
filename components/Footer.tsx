@@ -1,234 +1,191 @@
-"use client";
-
+import Image from "next/image";
 import Link from "next/link";
-import { JSX, useState } from "react";
-import axios from "axios";
 import {
   FaFacebookF,
   FaTwitter,
-  FaInstagram,
   FaLinkedinIn,
   FaTiktok,
   FaMediumM,
 } from "react-icons/fa";
-import { TbMail } from "react-icons/tb";
-import { FiSend } from "react-icons/fi";
+import { SiBinance } from "react-icons/si";
+import logo from "@/public/images/footer/logo.png";
+import visa from "@/public/images/footer/visa.png";
+import mastercard from "@/public/images/footer/mastercard.png";
+import stripe from "@/public/images/footer/stripe.png";
+import binancePay from "@/public/images/footer/binancepay.png";
+import wechatPay from "@/public/images/footer/wechat.png";
+import discover from "@/public/images/footer/discover.png";
+import sepa from "@/public/images/footer/sepa.png";
+import gatePay from "@/public/images/footer/gatepay.png";
+import { FaEnvelopeCircleCheck } from "react-icons/fa6";
 
-export default function Footer() {
-  const [email, setEmail] = useState<string>("");
-  const [, setMsg] = useState<string>("");
-
-  const showSuccessMessage = () => {
-    document.getElementById("newsletter")!.style.display = "inherit";
-    document.getElementById("repass")!.style.display = "none";
-  };
-
-  const subscribe = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    interface NewsletterResponse {
-      msg: string;
-    }
-    try {
-      const res = await axios.post<NewsletterResponse>(
-        "/api/v1/newsletter/subscribe",
-        { email }
-      );
-
-      setMsg(res.data.msg);
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      setMsg(
-        err.response?.data?.message ||
-          "Network problem, please try again later!"
-      );
-    }
-
-    showSuccessMessage();
-  };
-
+const Footer = () => {
   return (
-    <footer className="w-full bg-[#2C2C2C]">
-      <div className="w-full md:w-[90%] m-auto flex flex-col py-10 gap-5">
-        {/* Logo Section */}
-        <div className="flex flex-col md:flex-row items-center w-full justify-between">
-          <div className="w-full md:w-auto flex flex-col gap-2">
-            <div className="flex items-center gap-2 pl-3 md:pl-0 md:mb-2 mr-[5rem] md:mr-0 mb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-white font-Satoshi font-semibold text-[30px] md:text-[40px]"
-              >
-                NESTERLIFY
-              </Link>
-            </div>
-          </div>
+    <footer className="bg-[#2C2C2C] text-white py-10 px-5 md:px-20">
+      {/* Top Section: Logo & Payment Methods */}
+      <section className="grid grid-cols-5 justify-between gap-10">
+        <div className="flex flex-col items-center gap-6 ">
+          <Image src={logo} alt="Nesterlify Logo" width={180} height={50} />
 
-          {/* Navigation Links */}
-          <div className="grid grid-cols-2 md:grid-cols-4 items-start gap-4 md:gap-0 justify-between w-full">
-            <NavSection
-              title="Company"
-              links={[
-                { name: "About Us", path: "/about-us" },
-                { name: "Security", path: "/security" },
-                {
-                  name: "Careers",
-                  path: "https://jobs.talenthr.io/nesterlify",
-                  external: true,
-                },
-                { name: "Partner Program", path: "/partner-program" },
-              ]}
-            />
-
-            <NavSection
-              title="Legal"
-              links={[
-                { name: "Disclaimer", path: "/disclaimer" },
-                { name: "Privacy Policy", path: "/privacy-policy" },
-                { name: "AML/KYC Policy", path: "/aml-kyc-policy" },
-                { name: "Terms and Conditions", path: "/terms-and-conditions" },
-              ]}
-            />
-
-            <NavSection
-              title="Support"
-              links={[
-                { name: "Contact Us", path: "/contact-us" },
-                { name: "FAQ", path: "/faq" },
-                { name: "Disputes", path: "/dispute" },
-                { name: "Blog", path: "/blog" },
-              ]}
-            />
-
-            <NavSection
-              title="Resources"
-              links={[
-                { name: "Coin Listing", path: "/coin-listing" },
-                { name: "Investors", path: "/investors" },
-                { name: "Refer and Earn", path: "/referral-program" },
-                { name: "Nesterlify Charity", path: "/charity" },
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* Newsletter Subscription */}
-        <div className="flex flex-col md:flex-row gap-4 w-full justify-between">
-          <div className="md:ml-3 m-auto w-[90%] md:w-full">
-            <p className="font-Satoshi text-[24px] font-medium text-white">
-              Office Address
-            </p>
-            <p className="font-Satoshi text-[15px] md:text-[16px] text-gray-300 md:w-[83%] mt-1">
-              169 Madison Avenue, Suite 11530 New York, NY 10016, United States
-              of America
-            </p>
-          </div>
-
-          {/* Contact Information */}
-          <div className="flex items-center gap-2 m-auto w-[90%] md:w-full">
-            <TbMail className="text-2xl text-gray-200" />
-            <div>
-              <p className="text-[16px] font-Satoshi text-gray-200">
-                Got Questions? Email Us 24/7!
-              </p>
-              <span className="text-[16px] font-Satoshi text-white">
-                support@nesterlify.com
-              </span>
-            </div>
-          </div>
-
-          {/* Newsletter Subscription Form */}
-          <div className="flex flex-col gap-2 m-auto w-[90%] md:w-full">
-            <p className="text-[22px] md:text-[24px] font-Satoshi text-white font-medium">
-              Newsletter
-            </p>
-            <p className="text-[16px] font-Satoshi text-gray-300">
-              Sign up to get the latest updates and offers
-            </p>
-
-            <form className="flex items-center gap-2" onSubmit={subscribe}>
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="placeholder:text-[#7F7F7F] text-white w-full border border-[#C2C2C2] p-2 rounded-md bg-transparent"
-                required
+          <div className="grid grid-cols-4 gap-3 justify-center">
+            {[
+              binancePay,
+              gatePay,
+              visa,
+              mastercard,
+              discover,
+              wechatPay,
+              sepa,
+              stripe,
+            ].map((img, index) => (
+              <Image
+                key={index}
+                src={img}
+                alt="Payment Method"
+                width={50}
+                height={30}
               />
-              <button
-                type="submit"
-                className="bg-[#F05A1B] text-white p-2 rounded-md"
-              >
-                <FiSend />
-              </button>
-            </form>
+            ))}
           </div>
         </div>
 
-        {/* Social Media Links */}
-        <div className="flex flex-col items-center w-full">
-          <p className="text-[#7F7F7F] font-Satoshi font-medium text-[20px] md:text-[24px]">
-            Stay Connected!
+        {/* Middle Section: Links */}
+
+        <div className="ml-4">
+          <h3 className="text-lg font-bold">Company</h3>
+          <ul className="mt-2 space-y-2 text-base">
+            {["About Us", "Security", "Careers", "Partner Program"].map(
+              (item, index) => (
+                <li key={index}>
+                  <Link href="#" className="hover:text-[#F05A1B]">
+                    {item}
+                  </Link>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-bold">Legal</h3>
+          <ul className="mt-2 space-y-2 text-base">
+            {[
+              "Disclaimer",
+              "Privacy Policy",
+              "AML/KYC Policy",
+              "Terms and Conditions",
+            ].map((item, index) => (
+              <li key={index}>
+                <Link href="#" className="hover:text-[#F05A1B]">
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-bold">Resources</h3>
+          <ul className="mt-2 space-y-2 text-base">
+            {[
+              "Coin Listing",
+              "Investors",
+              "Refer and Earn",
+              "Nesterlify Charity",
+            ].map((item, index) => (
+              <li key={index}>
+                <Link href="#" className="hover:text-[#F05A1B]">
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-bold">Support</h3>
+          <ul className="mt-2 space-y-2 text-base">
+            {["Contact Us", "FAQ", "Disputes", "Blog"].map((item, index) => (
+              <li key={index}>
+                <Link href="#" className="hover:text-[#F05A1B]">
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Contact Info & Newsletter */}
+      <div className="flex flex-col md:flex-row justify-between items-center mt-10 gap-6">
+        <div className="text-center md:text-left space-y-4">
+          <h3 className="font-medium text-2xl">Office Address</h3>
+          <p className="text-base">
+            169 Madison Avenue, Suite 11530 New York, <br /> NY 10016, United
+            States of America.
           </p>
-          <div className="flex gap-3 mt-3">
-            <SocialIcon
-              icon={<FaFacebookF />}
-              url="https://www.facebook.com/profile.php?id=61568445872071"
+        </div>
+        <div className="flex flex-row items-center space-x-6">
+          <FaEnvelopeCircleCheck className="text-gray-100 text-3xl" />
+          <div>
+            <p className="text-base">Got Questions ? Emaill Us 24/7!</p>
+
+            <Link
+              href="mailto:support@nesterlify.com"
+              className="text-base font-medium hover:underline"
+            >
+              support@nesterlify.com
+            </Link>
+          </div>
+        </div>
+        <div className="text-sm text-center md:text-left">
+          <h3 className="font-semibold">Newsletter</h3>
+          <p>Sign up to get the latest updates and offers</p>
+          <div className="flex mt-2">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="p-2 rounded-l bg-gray-700 text-white w-64 focus:outline-none"
             />
-            <SocialIcon icon={<FaTwitter />} url="https://x.com/nesterlify" />
-            <SocialIcon
-              icon={<FaInstagram />}
-              url="https://www.instagram.com/nesterlify/"
-            />
-            <SocialIcon
-              icon={<FaLinkedinIn />}
-              url="https://www.linkedin.com/company/nesterlify"
-            />
-            <SocialIcon
-              icon={<FaTiktok />}
-              url="https://tiktok.com/@nesterlify/"
-            />
-            <SocialIcon
-              icon={<FaMediumM />}
-              url="https://medium.com/@nesterlify"
-            />
+            <button className="bg-[#F05A1B] px-4 py-2 rounded-r">
+              Subscribe
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Social Media Links */}
+      <div className="flex flex-row justify-between">
+        {" "}
+        <div className="flex justify-center gap-6 mt-10 text-lg">
+          <SiBinance className="hover:text-orange-500 cursor-pointer" />
+          <FaFacebookF className="hover:text-orange-500 cursor-pointer" />
+          <FaTwitter className="hover:text-orange-500 cursor-pointer" />
+          <FaLinkedinIn className="hover:text-orange-500 cursor-pointer" />
+          <FaTiktok className="hover:text-orange-500 cursor-pointer" />
+          <FaMediumM className="hover:text-orange-500 cursor-pointer" />
+        </div>
+        <div className="items-center">
+          {" "}
+          <button className="bg-[#F05A1B] px-6 py-2 rounded-full">
+            Support
+          </button>
+        </div>
+      </div>
+
+      <div className="flex mx-auto items-center mt-10 space-x-6 bg-[#F05A1B] px-6 py-3 rounded">
+        <button className="flex items-center gap-2">🌐 English</button>
+        <button className="flex items-center gap-2">💲 USD</button>
+        <button className="flex items-center gap-2">🌙 Theme</button>
+      </div>
+
+      <div className="flex  items-center mt-6">
+        <p className="text-lg text-center">
+          © 2024 NESTERLY TECHNOLOGIES INC | All Rights Reserved.
+        </p>
+      </div>
     </footer>
   );
-}
+};
 
-const NavSection = ({
-  title,
-  links,
-}: {
-  title: string;
-  links: { name: string; path: string; external?: boolean }[];
-}) => (
-  <div className="flex flex-col items-start gap-3">
-    <h1 className="text-lg text-white font-medium">{title}</h1>
-    <ul className="flex flex-col gap-3">
-      {links.map(({ name, path, external }) => (
-        <li key={name}>
-          <Link
-            href={path}
-            target={external ? "_blank" : "_self"}
-            className="text-gray-300 hover:text-[#F05A1B]"
-          >
-            {name}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
-const SocialIcon = ({ icon, url }: { icon: JSX.Element; url: string }) => (
-  <Link
-    href={url}
-    target="_blank"
-    className="text-white text-xl hover:text-[#F05A1B]"
-  >
-    {icon}
-  </Link>
-);
+export default Footer;

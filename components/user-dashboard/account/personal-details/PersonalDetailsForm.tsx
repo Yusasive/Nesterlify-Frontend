@@ -9,8 +9,6 @@ import PersonalDetails from "./PersonalDetails";
 import LocationDetails from "./LocationDetails";
 import PassportIdDetails from "./PassportIdDetails";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 interface User {
   id: string;
   name: string;
@@ -41,6 +39,10 @@ interface PassportIdFormData {
   issuedby: string;
   passportNo: string;
   passportExpiryDate: string;
+}
+
+interface ApiErrorResponse {
+  message?: string;
 }
 
 type FullProfileFormData = User &
@@ -117,9 +119,9 @@ export default function PersonalDetailsForm() {
       firstName: formData.firstName,
       lastName: formData.lastName,
       middleName: formData.middleName || "",
-      phoneNumber: formData.phoneNumber, 
+      phoneNumber: formData.phoneNumber,
       nationality: formData.nationality,
-      birthPlace: formData.city, 
+      birthPlace: formData.city,
       issuanceDate: formData.issuanceDate || "2025-01-01",
       state: formData.state,
       city: formData.city,
@@ -149,12 +151,18 @@ export default function PersonalDetailsForm() {
         toast.success("Profile updated successfully!");
         setIsEditing(false);
       }
-    } catch (error: any) {
-      console.error(
-        "❌ Error updating profile:",
-        error.response?.data || error
-      );
-      toast.error(error.response?.data?.message || "Failed to update profile.");
+    } catch (error: unknown) {
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response?: { data?: ApiErrorResponse } };
+        console.error(
+          "❌ Error updating profile:",
+          err.response?.data || error
+        );
+        toast.error(err.response?.data?.message || "Failed to update profile.");
+      } else {
+        console.error("❌ Unexpected error:", error);
+        toast.error("Something went wrong.");
+      }
     }
   };
 

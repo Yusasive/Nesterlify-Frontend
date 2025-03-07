@@ -10,6 +10,8 @@ import OtpVerification from "@/app/auth/OTPModal";
 import { useRouter } from "next/navigation";
 import { AuthResponse } from "@/types/auth";
 import { login } from "@/app/features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/app/store/store";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -29,7 +31,7 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const router = useRouter();
-
+  const dispatch: AppDispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -65,21 +67,38 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
       );
 
       if (isLogin && response.data.data?.token) {
-        const userData = response.data.data.user || {}; 
+        const userData = response.data.data.user || {};
         const token = response.data.data.token;
-
-       const formattedUser = {
-         _id: userData._id, 
-         username: userData.username,
-         fullName: userData.fullName, 
-         email: userData.email,
-         role: userData.role,
-         profilePicture: userData.profilePicture || "",
-         isBlocked: userData.isBlocked,
-         emailNotification: userData.emailNotification,
-         twoFa: userData.twoFa,
-       };
-
+        const formattedUser = {
+          _id: userData._id,
+          username: userData.username,
+          fullName: userData.fullName,
+          email: userData.email,
+          role: userData.role,
+          profilePicture: userData.profilePicture || "",
+          isBlocked: userData.isBlocked,
+          emailNotification: userData.emailNotification,
+          twoFa: userData.twoFa,
+          title: userData.title || "",
+          gender: userData.gender || "",
+          firstName: userData.firstName || "",
+          lastName: userData.lastName || "",
+          middleName: userData.middleName || "",
+          phoneNumber: userData.phoneNumber || "",
+          nationality: userData.nationality || "",
+          birthPlace: userData.birthPlace || "",
+          issuanceDate: userData.issuanceDate || "",
+          state: userData.state || "",
+          city: userData.city || "",
+          zipcode: userData.zipcode || "",
+          houseNo: userData.houseNo || "",
+          houseAddress: userData.houseAddress || "",
+          documenttype: userData.documenttype || "",
+          issuedby: userData.issuedby || "",
+          passportNo: userData.passportNo || "",
+          passportExpiryDate: userData.passportExpiryDate || "",
+          dateOfBirth: userData.dateOfBirth || "",
+        };
 
         console.log("Formatted User Data for Redux:", formattedUser);
         console.log("Extracted Token:", token);
@@ -218,7 +237,4 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
       )}
     </>
   );
-}
-function dispatch(arg0: any) {
-  throw new Error("Function not implemented.");
 }
