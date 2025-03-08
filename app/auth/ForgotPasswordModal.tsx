@@ -32,7 +32,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
      setEmail(data.email);
      setOtpOpen(true);
    } catch (error) {
-     console.error("Something went wrong:", error); // Now using `error`
+     console.error("Something went wrong:", error);
      toast.error("Something went wrong. Please try again!");
    } finally {
      setLoading(false);

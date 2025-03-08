@@ -32,14 +32,14 @@ export default function PersonalDetails({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Dropdown
           label="Title"
-          options={["Mr", "Mrs", "Miss", "Dr"]}
+          options={["N/A", "Mr", "Mrs", "Miss", "Dr"]}
           value={formData.title}
           onChange={(val) => handleChange("title", val)}
           isEditing={isEditing}
         />
         <Dropdown
           label="Gender"
-          options={["Male", "Female", "Other"]}
+          options={["N/A", "Male", "Female", "Other"]}
           value={formData.gender}
           onChange={(val) => handleChange("gender", val)}
           isEditing={isEditing}

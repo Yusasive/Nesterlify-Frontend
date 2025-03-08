@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "./InputField";
@@ -15,6 +17,7 @@ import { AppDispatch } from "@/app/store/store";
 
 interface AuthFormProps {
   isLogin: boolean;
+  onSuccess?: () => void;
 }
 
 interface AuthFormInputs {
@@ -26,7 +29,7 @@ interface AuthFormInputs {
   confirmPassword?: string;
 }
 
-export default function AuthForm({ isLogin }: AuthFormProps) {
+export default function AuthForm({ isLogin, onSuccess }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
@@ -38,6 +41,7 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
     watch,
     formState: { errors },
   } = useForm<AuthFormInputs>();
+  const password = watch("password");
 
   const onSubmit = async (data: AuthFormInputs) => {
     setLoading(true);
@@ -54,6 +58,7 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
             username: data.username,
             email: data.email,
             password: data.password,
+            confirmPassword: data.confirmPassword,
           };
 
       const response = await axios.post<AuthResponse>(url, payload, {
@@ -108,6 +113,8 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
         dispatch(login({ token, user: formattedUser }));
 
         toast.success("Redirecting to dashboard...");
+        if (onSuccess) onSuccess();
+
         router.push("/user-dashboard");
       } else if (!isLogin) {
         console.log("Signup successful, opening OTP modal...");
@@ -208,10 +215,8 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
               label="Confirm Password"
               register={register("confirmPassword", {
                 required: "Please confirm your password",
-                validate: (value) => {
-                  const password = watch("password");
-                  return password === value || "Passwords do not match";
-                },
+                validate: (value) =>
+                  value === password || "Passwords do not match",
               })}
               error={errors.confirmPassword?.message}
             />

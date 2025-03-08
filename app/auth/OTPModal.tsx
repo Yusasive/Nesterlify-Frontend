@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "@/app/features/auth/authSlice";
 import OtpInput from "@/components/auth/OtpInput";
-import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import SuccessModal from "./SuccessModal";
@@ -13,14 +14,14 @@ interface OtpVerificationProps {
   email: string | null;
 }
 
-export default function OtpVerification({ mode }: OtpVerificationProps) {
-  const [timer, setTimer] = useState(30);
+export default function OtpVerification({ mode, email }: OtpVerificationProps) {
+  const dispatch = useDispatch();
+  const [timer, setTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  const [otp, setOtp] = useState("");
 
   useEffect(() => {
     if (timer > 0) {
@@ -31,67 +32,100 @@ export default function OtpVerification({ mode }: OtpVerificationProps) {
     }
   }, [timer]);
 
-  const handleOtpComplete = async (otp: string) => {
+  const handleOtpComplete = async (enteredOtp: string) => {
+    if (!enteredOtp || enteredOtp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    setOtp(enteredOtp);
     setLoading(true);
 
     try {
-      // Simulate API call
-      try {
-        const result = await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            if (otp === "123456") {
-              resolve("OTP Verified");
-            } else {
-              reject(new Error("Invalid OTP"));
-            }
-          }, 1500);
-        });
+      const response = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          activationCode: enteredOtp,
+        }),
+      });
 
-        console.log(result);
-      } catch (error) {
-        console.error("Error occurs", error);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Invalid OTP");
       }
 
       toast.success("OTP Verified Successfully!");
+
+      // ✅ Store user data in Redux & local storage
+      dispatch(
+        login({
+          token: data.token,
+          user: data.user, // Make sure the API returns full user details
+        })
+      );
+
       if (mode === "register") {
         setShowSuccessModal(true);
       } else if (mode === "forgot-password") {
         setShowResetPasswordModal(true);
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Something went wrong!";
-      toast.error(errorMessage);
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong!"
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleResendOtp = () => {
-    setTimer(30);
+  const handleResendOtp = async () => {
+    setTimer(60);
     setIsResendDisabled(true);
-    toast.success("OTP Resent Successfully!");
+
+    try {
+      const response = await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to resend OTP");
+      }
+
+      toast.success("OTP Resent Successfully!");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong!"
+      );
+    }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[9999]">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-[400px] text-center relative">
         <h2 className="text-2xl text-[#2C2C2C] font-bold">
-          {mode === "register"
-            ? "Let us verify it’s you"
-            : "Let us verify it’s you"}
+          Let us verify it’s you
         </h2>
         <p className="text-sm mt-2 text-[#7F7F7F]">
-          Enter the 6-digit code sent to your {email}
+          Enter the 6-digit code sent to{" "}
+          <strong>{email || "your email"}</strong>
         </p>
 
         <div className="mt-6">
-          <OtpInput length={6} onComplete={handleOtpComplete} />
+          <OtpInput length={6} onComplete={(otp) => setOtp(otp)} />
         </div>
 
         <button
-          onClick={() => handleOtpComplete("")}
-          disabled={loading}
+          onClick={() => handleOtpComplete(otp)}
+          disabled={loading || otp.length !== 6}
           className="w-full mt-6 py-3 bg-[#F05A1B] text-white rounded-xl text-lg font-semibold hover:bg-orange-600 transition disabled:opacity-70 flex justify-center items-center"
         >
           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Submit"}
@@ -112,8 +146,12 @@ export default function OtpVerification({ mode }: OtpVerificationProps) {
         </p>
       </div>
 
-      {showSuccessModal && <SuccessModal mode="register" />}
-
+      {showSuccessModal && (
+        <SuccessModal
+          mode="register"
+          onClose={() => setShowSuccessModal(false)}
+        />
+      )}
       {showResetPasswordModal && (
         <ResetPasswordModal onClose={() => setShowResetPasswordModal(false)} />
       )}

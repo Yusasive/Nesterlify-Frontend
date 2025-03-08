@@ -63,7 +63,15 @@ export default function PersonalDetailsForm() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem("user") || "null");
+    const localUserString = localStorage.getItem("user");
+    let localUser = null;
+
+    try {
+      localUser = localUserString ? JSON.parse(localUserString) : null;
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
+
     const localToken = localStorage.getItem("token") || "";
 
     const userData = storedUser || localUser;

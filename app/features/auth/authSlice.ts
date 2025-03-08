@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Define User Interface
 export interface User {
   _id: string;
   username: string;
@@ -11,8 +10,6 @@ export interface User {
   isBlocked: boolean;
   emailNotification: boolean;
   twoFa: boolean;
-
-  // Additional user details from backend response
   title: string;
   gender: string;
   firstName: string;
@@ -45,9 +42,22 @@ const storedUser =
   typeof window !== "undefined" ? localStorage.getItem("user") : null;
 
 const initialState: AuthState = {
-  token: storedToken,
-  user: storedUser ? JSON.parse(storedUser) : null,
+  token: null,
+  user: null,
 };
+
+if (typeof window !== "undefined") {
+  try {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken) initialState.token = storedToken;
+    if (storedUser) initialState.user = JSON.parse(storedUser);
+  } catch (error) {
+    console.error("Error reading localStorage:", error);
+  }
+}
+
 
 const authSlice = createSlice({
   name: "auth",

@@ -6,25 +6,29 @@ import { useState } from "react";
 
 interface SuccessModalProps {
   mode: "register" | "forgot-password";
+  onClose: () => void; 
 }
 
-const SuccessModal = ({ mode }: SuccessModalProps) => {
+const SuccessModal = ({ mode, onClose }: SuccessModalProps) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleClick = () => {
     setLoading(true);
+    onClose(); 
 
-    if (mode === "register") {
-      router.push("/user-dashboard");
-    } else if (mode === "forgot-password") {
-      router.push("/login");
-    }
+    setTimeout(() => {
+      if (mode === "register") {
+        router.replace("/user-dashboard");
+      } else if (mode === "forgot-password") {
+        router.replace("/login");
+      }
+    }, 100);
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[9999]">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center relative">
+      <div className="bg-white p-6 rounded-2xl shadow-xl w-[400px] text-center relative">
         <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
         <h2 className="text-lg text-[#4B4B4B] font-bold mt-4">
           {mode === "register"
@@ -33,8 +37,8 @@ const SuccessModal = ({ mode }: SuccessModalProps) => {
         </h2>
         <p className="text-[#4B4B4B] text-[15px] mt-2">
           {mode === "register"
-            ? "Congratulations!!!"
-            : "You have reset your password successfully"}
+            ? "Your account has been created successfully."
+            : "You have reset your password successfully."}
         </p>
         <button
           onClick={handleClick}

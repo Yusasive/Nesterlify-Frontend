@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import {
   FiBell,
@@ -13,6 +13,8 @@ import {
 import { MdAccountBalanceWallet } from "react-icons/md";
 import Link from "next/link";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store/store"; // Adjust path if necessary
 
 const userNavLinks = [
   { name: "Account", href: "/account", icon: <FiUser size={20} /> },
@@ -33,8 +35,37 @@ const userNavLinks = [
   { name: "Credits", href: "/credits", icon: <FiCreditCard size={20} /> },
 ];
 
+interface User {
+  fullName: string;
+  profilePicture?: string; // Optional field
+}
+
 export default function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [user, setUser] = useState<User>({
+    fullName: "Guest",
+    profilePicture: "/profile.jpg",
+  });
+
+  // Retrieve user data from Redux store or localStorage
+  const reduxUser = useSelector((state: RootState) => state.auth.user);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser((prev) => ({
+        ...prev,
+        ...JSON.parse(storedUser),
+        profilePicture: JSON.parse(storedUser).profilePicture || "/profile.jpg",
+      }));
+    } else if (reduxUser) {
+      setUser((prev) => ({
+        ...prev,
+        ...reduxUser,
+        profilePicture: reduxUser.profilePicture || "/profile.jpg",
+      }));
+    }
+  }, [reduxUser]);
 
   return (
     <aside
@@ -49,23 +80,26 @@ export default function Sidebar() {
         {isExpanded ? <HiX size={28} /> : <HiMenu size={28} />}
       </button>
 
+      {/* Profile Section */}
       <div className="flex items-center space-x-3 mt-4">
         <Image
-          src="/profile.jpg"
+          src={user.profilePicture || "/profile.jpg"}
           alt="User Profile"
           width={40}
           height={40}
-          className="rounded-full"
+          className="rounded-full object-cover"
         />
+
         {isExpanded && (
           <div>
             <p className="text-[#2C2C2C] text-base font-medium">
-              Good morning, Miracle
+              Good morning, {user.fullName.split(" ")[0] || "Guest"}
             </p>
           </div>
         )}
       </div>
 
+      {/* Navigation Links */}
       <nav className="mt-6 flex-grow space-y-4">
         {userNavLinks.map(({ name, href, icon, badge }) => (
           <Link

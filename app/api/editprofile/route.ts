@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 
 export async function PUT(req: Request) {
   try {
-    const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    
+   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    console.log("🔍 API Base URL:", API_URL);
+
     if (!API_URL) {
       console.error("❌ API URL is missing in .env file.");
       return NextResponse.json(
@@ -36,7 +39,7 @@ export async function PUT(req: Request) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: authHeader, 
+        Authorization: authHeader,
       },
       body: JSON.stringify(body),
     });

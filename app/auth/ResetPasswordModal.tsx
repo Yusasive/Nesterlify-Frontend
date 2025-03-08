@@ -109,7 +109,10 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
           </div>
         </div>
       ) : (
-        <SuccessModal mode="forgot-password" />
+        <SuccessModal
+          mode="register"
+          onClose={() => setShowSuccessModal(false)}
+        />
       )}
     </>
   );
