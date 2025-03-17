@@ -6,7 +6,7 @@ import { useState } from "react";
 
 interface SuccessModalProps {
   mode: "register" | "forgot-password";
-  onClose: () => void; 
+  onClose: () => void;
 }
 
 const SuccessModal = ({ mode, onClose }: SuccessModalProps) => {
@@ -15,7 +15,7 @@ const SuccessModal = ({ mode, onClose }: SuccessModalProps) => {
 
   const handleClick = () => {
     setLoading(true);
-    onClose(); 
+    onClose();
 
     setTimeout(() => {
       if (mode === "register") {

@@ -35,7 +35,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         {/* Content Section */}
         <div className="p-4 space-y-4 flex flex-col flex-grow">
           <span
-            className={`px-3 py-1 text-sm lg:text-base font-medium rounded-lg ${color}`}
+            className={`px-3 py-1 w-fit text-sm lg:text-base font-medium rounded-lg ${color}`}
           >
             • {category}
           </span>

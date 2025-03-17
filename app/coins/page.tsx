@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaAngleRight } from "react-icons/fa6";
 import axios from "axios";
-
-import { E, F, G } from "@/public/images/coins/payment";
-import { A, B, C, D, } from "@/public/images/coins/payment";
+import {
+  SearchIcon,
+  Benance,
+  GatePay,
+  CreditDebit,
+  WeChatPay,
+  USDT,
+  DAI,
+  Tron,
+  True,
+} from "@/components/Icons";
 
 interface Coin {
   uuid: string;
@@ -15,62 +23,118 @@ interface Coin {
   iconUrl: string;
 }
 
-interface ApiResponse {
+interface CoinApiResponse {
   data: {
     coins: Coin[];
   };
 }
 
+// List of allowed cryptocurrencies to display
+const allowedCoins = new Set([
+  "Bitcoin",
+  "Ethereum",
+  "Tether USD",
+  "BNB",
+  "XRP",
+  "Solana",
+  "USDC",
+  "Cardano",
+  "Dogecoin",
+  "TRON",
+  "Chainlink",
+  "Polkadot",
+  "Litecoin",
+  "DAI",
+  "SHIB",
+  "Bitcoin Cash",
+  "Stellar",
+  "TrueUSD",
+  "Filecoin",
+  "Hedera",
+  "NEAR Protocol",
+  "KAS",
+  "VeChain",
+  "TUSD",
+  "FTM",
+  "Basic Attention Token",
+  "Decentraland",
+  "Tezos",
+  "EOS",
+  "Gala",
+  "XDC Network",
+  "Chiliz",
+  "ApeCoin",
+  "PancakeSwap",
+  "PEPE",
+  "GateToken",
+  "Illuvium",
+  "Zil",
+  "1INCH",
+  "Dash",
+  "NEW",
+  "QTUM",
+  "OCEAN",
+  "IoTex",
+  "JasmyCoin",
+  "SuperFarm",
+  "Waves",
+  "SXP",
+  "Harmony",
+  "Stratis",
+  "GUSD",
+  "ARK",
+  "DigiByte",
+  "TET",
+  "DAO",
+  "Seedify.fund",
+  "Standard Tokenization Protocol",
+  "Cartesi",
+  "Bitgert",
+  "Chromia",
+  "Syscoin",
+  "Nano",
+  "XYO",
+  "VeChain",
+  "Aave",
+  "Ethereum Classic",
+  "Internet Computer (DFINITY)",
+  "Uniswap",
+  "Stellar",
+  "LEO",
+  "Wrapped BTC",
+]);
 
 const CoinsList = () => {
   const [coins, setCoins] = useState<Coin[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     const fetchCoins = async () => {
       try {
-       const response = await axios.get<ApiResponse>(
-         "https://api.coinranking.com/v2/coins",
-         {
-           headers: {
-             "x-access-token": process.env.NEXT_PUBLIC_COINRANKING_API_KEY,
-           },
-         }
-       );
+        const response = await axios.get<CoinApiResponse>(
+          "https://api.coinranking.com/v2/coins",
+          {
+            headers: {
+              "x-access-token": process.env.NEXT_PUBLIC_COINRANKING_API_KEY!,
+            },
+          }
+        );
+
+        console.log("API Response:", response.data);
 
         const fetchedCoins: Coin[] = response.data?.data?.coins || [];
 
-        const excludedNames = new Set([
-          "Wrapped staked liquid 2.0",
-          "Wrapped liquid staked Ether 2.0",
-          "Wrapped Ether",
-          "Wrapped eETH",
-          "Binance-Peg BSC-USD",
-          "Tokenize Xchange",
-          "Bittensor",
-          "Artificial intelligence Alliance",
-          "Whitebit coin",
-          "Energy swap",
-          "Tokenized exchange",
-          "Virtual protocols",
-          "Binance peg USD",
-          "USDe",
-          "WhiteBIT Coin",
-          "Virtuals Protocol",
-          "USDC",
-          "Bitget Token",
-          "Render Token",
-          "EnergySwap",
-          "Dai",
-          "Tether USD",
-          "Artificial Superintelligence Alliance",
-          "Internet Computer (DFINITY)",
-          "Lido Staked Ether",
-        ]);
-
-        const filteredCoins = fetchedCoins.filter(
-          (coin) => !excludedNames.has(coin.name)
+        console.log(
+          "Fetched Coins:",
+          fetchedCoins.map((coin) => coin.name)
         );
+        console.log("Allowed Coins:", Array.from(allowedCoins));
+
+        const filteredCoins = fetchedCoins.filter((coin) =>
+          allowedCoins.has(coin.name)
+        );
+
         setCoins(filteredCoins);
       } catch (error) {
         console.error("Error fetching coins:", error);
@@ -79,6 +143,10 @@ const CoinsList = () => {
 
     fetchCoins();
   }, []);
+
+  const filteredCoins = coins.filter((coin) =>
+    coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="w-full bg-[#FAFAFA] py-8">
@@ -112,11 +180,13 @@ const CoinsList = () => {
         <div className="w-full rounded-[8px] bg-white p-3 flex flex-col gap-4">
           {/* Search Bar */}
           <div className="w-full flex bg-[#F1F1F1] my-2 items-center p-2 gap-2 rounded-[16px]">
-            <Image src={A} alt="Search icon" width={20} height={20} />
+            <SearchIcon />
             <input
-              className="w-full outline-none placeholder-[#A3A3A3] text-[15px] bg-[#F1F1F1]"
+              className="w-full text-black outline-none placeholder-[#A3A3A3] text-[15px] bg-[#F1F1F1]"
               type="search"
               placeholder="Search coin"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
@@ -127,29 +197,16 @@ const CoinsList = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 mt-3 gap-3">
               {[
-                { img: E, text: "BinancePay" },
-                { img: F, text: "Google Pay", extraImg: B },
-                { img: G, text: "Credit/Debit Card" },
-                { img: A, text: "WeChatPay" },
+                { img: <Benance />, text: "BinancePay" },
+                { img: <GatePay />, text: "Google Pay" },
+                { img: <CreditDebit />, text: "Credit/Debit Card" },
+                { img: <WeChatPay />, text: "WeChatPay" },
               ].map((item, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 p-2 border border-[#E7E7E7] rounded-[8px]"
                 >
-                  <Image
-                    src={item.img}
-                    alt={item.text}
-                    width={24}
-                    height={24}
-                  />
-                  {item.extraImg && (
-                    <Image
-                      src={item.extraImg}
-                      alt="Google Pay Logo"
-                      width={60}
-                      height={25}
-                    />
-                  )}
+                  {item.img}
                   <p className="text-[#2C2C2C] text-[14px] md:text-[16px]">
                     {item.text}
                   </p>
@@ -165,21 +222,16 @@ const CoinsList = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 mt-3 gap-3">
               {[
-                { img: A, text: "USDT" },
-                { img: B, text: "DAI" },
-                { img: C, text: "USDC" },
-                { img: D, text: "True USD" },
+                { img: <USDT />, text: "USDT" },
+                { img: <DAI />, text: "DAI" },
+                { img: <Tron />, text: "USDC" },
+                { img: <True />, text: "True USD" },
               ].map((item, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 p-2 border border-[#E7E7E7] rounded-[8px]"
                 >
-                  <Image
-                    src={item.img}
-                    alt={item.text}
-                    width={25}
-                    height={25}
-                  />
+                  {item.img}
                   <p className="text-[#2C2C2C] text-[14px] md:text-[16px]">
                     {item.text}
                   </p>
@@ -194,7 +246,7 @@ const CoinsList = () => {
               Cryptocurrencies
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 mt-3 gap-3">
-              {coins.map((coin) => (
+              {filteredCoins.map((coin) => (
                 <div
                   key={coin.uuid}
                   className="flex items-center gap-2 p-2 border border-[#E7E7E7] rounded-[8px]"

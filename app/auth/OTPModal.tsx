@@ -60,11 +60,11 @@ export default function OtpVerification({ mode, email }: OtpVerificationProps) {
 
       toast.success("OTP Verified Successfully!");
 
-      // ✅ Store user data in Redux & local storage
+    
       dispatch(
         login({
           token: data.token,
-          user: data.user, // Make sure the API returns full user details
+          user: data.user, 
         })
       );
 
@@ -109,7 +109,7 @@ export default function OtpVerification({ mode, email }: OtpVerificationProps) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[9999]">
+    <div className="fixed inset-0 flex items-center justify-center bg-white py-10 z-[9999]">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-[400px] text-center relative">
         <h2 className="text-2xl text-[#2C2C2C] font-bold">
           Let us verify it’s you

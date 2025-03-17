@@ -34,48 +34,68 @@ export interface User {
 interface AuthState {
   token: string | null;
   user: User | null;
+  expiresAt: number | null;
 }
 
-const storedToken =
-  typeof window !== "undefined" ? localStorage.getItem("token") : null;
-const storedUser =
-  typeof window !== "undefined" ? localStorage.getItem("user") : null;
+const EXPIRATION_TIME = 5 * 60 * 60 * 1000; 
 
-const initialState: AuthState = {
-  token: null,
-  user: null,
-};
+const getStoredAuthState = () => {
+  if (typeof window === "undefined")
+    return { token: null, user: null, expiresAt: null };
 
-if (typeof window !== "undefined") {
   try {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
+    const storedExpiresAt = localStorage.getItem("expiresAt");
 
-    if (storedToken) initialState.token = storedToken;
-    if (storedUser) initialState.user = JSON.parse(storedUser);
+    if (storedToken && storedUser && storedExpiresAt) {
+      const expiresAt = parseInt(storedExpiresAt, 10);
+      const currentTime = Date.now();
+
+      if (currentTime > expiresAt) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("expiresAt");
+        return { token: null, user: null, expiresAt: null };
+      }
+
+      return {
+        token: storedToken,
+        user: JSON.parse(storedUser),
+        expiresAt,
+      };
+    }
   } catch (error) {
     console.error("Error reading localStorage:", error);
   }
-}
 
+  return { token: null, user: null, expiresAt: null };
+};
+
+const initialState: AuthState = getStoredAuthState();
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     login: (state, action: PayloadAction<{ token: string; user: User }>) => {
+      const expiresAt = Date.now() + EXPIRATION_TIME;
       state.token = action.payload.token;
       state.user = action.payload.user;
+      state.expiresAt = expiresAt;
 
       localStorage.setItem("token", action.payload.token);
       localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("expiresAt", expiresAt.toString());
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
+      state.expiresAt = null;
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("expiresAt");
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {

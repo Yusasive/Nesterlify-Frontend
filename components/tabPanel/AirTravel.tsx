@@ -68,7 +68,7 @@ export default function FlightSearchForm() {
               {selectedClass}
               <HiChevronDown className="text-gray-500" />
             </Listbox.Button>
-            <Listbox.Options className="absolute w-full mt-1 bg-white border rounded-md shadow-lg">
+            <Listbox.Options className="absolute text-black w-full mt-1 bg-white border rounded-md shadow-lg">
               {classes.map((flightClass) => (
                 <Listbox.Option key={flightClass} value={flightClass}>
                   {({ selected }) => (
