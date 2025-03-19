@@ -6,10 +6,22 @@ import Image from "next/image";
 
 const categories = ["All", "Flight", "Hotel", "Car", "Activity"];
 
+// Define the type for saved places
+interface SavedPlace {
+  id: number;
+  category: string;
+  image: string;
+  name: string;
+  location: string;
+  price: string;
+  rating: number;
+  reviews: number;
+}
+
 const SavedItems = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Flight");
-  const [savedPlaces, setSavedPlaces] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("Flight");
+  const [savedPlaces, setSavedPlaces] = useState<SavedPlace[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Simulating API call delay
@@ -37,7 +49,7 @@ const SavedItems = () => {
         },
       ]);
       setLoading(false);
-    }, 2000); 
+    }, 2000);
   }, []);
 
   const filteredPlaces =
