@@ -7,7 +7,8 @@ import { Listbox } from "@headlessui/react";
 import { HiChevronDown, HiSwitchHorizontal } from "react-icons/hi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaUserFriends } from "react-icons/fa";
+import { BsCalendar } from "react-icons/bs";
+import { FaPlaneArrival, FaPlaneDeparture, FaUserFriends } from "react-icons/fa";
 
 const tripTypes = ["One way", "Round trip", "Multi-city"];
 const classes = ["Economy", "Premium Economy", "Business", "First Class"];
@@ -50,56 +51,54 @@ export default function FlightSearchForm() {
   };
 
   // API Call Function
- const searchFlights = async () => {
-   if (!from || !to) {
-     alert("Please enter both origin and destination");
-     return;
-   }
+  const searchFlights = async () => {
+    if (!from || !to) {
+      alert("Please enter both origin and destination");
+      return;
+    }
 
-   setLoading(true);
+    setLoading(true);
 
-   try {
-     const response = await fetch("/api/search-flight", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({
-         from,
-         to,
-         departureDate: departureDate?.toISOString(),
-         returnDate: returnDate?.toISOString(),
-         tripType,
-         passengers,
-         selectedClass,
-       }),
-     });
+    try {
+      const response = await fetch("/api/search-flight", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from,
+          to,
+          departureDate: departureDate?.toISOString(),
+          returnDate: returnDate?.toISOString(),
+          tripType,
+          passengers,
+          selectedClass,
+        }),
+      });
 
-     const data = await response.json();
+      const data = await response.json();
 
-     if (!response.ok) {
-       throw new Error(data.error || "Error fetching flights");
-     }
+      if (!response.ok) {
+        throw new Error(data.error || "Error fetching flights");
+      }
 
-     if (!data?.data || data.data.length === 0) {
-       alert("No flights found for the selected criteria.");
-       return;
-     }
+      if (!data?.data || data.data.length === 0) {
+        alert("No flights found for the selected criteria.");
+        return;
+      }
 
-     setResults(data);
-     setIsModalOpen(true);
-   } catch (error: unknown) {
-     console.error("Error fetching flights:", error);
+      setResults(data);
+      setIsModalOpen(true);
+    } catch (error: unknown) {
+      console.error("Error fetching flights:", error);
 
-     let errorMessage = "Error fetching flights. Please try again.";
+      let errorMessage = "Error fetching flights. Please try again.";
 
-     if (error instanceof Error) {
-       errorMessage = error.message;
-     }
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
 
-     alert(errorMessage);
-   }
-
- };
-
+      alert(errorMessage);
+    }
+  };
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-3">
@@ -164,13 +163,16 @@ export default function FlightSearchForm() {
       <div className="flex flex-row">
         <div className="flex items-center space-x-2">
           {/* From Input */}
-          <input
-            type="text"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            placeholder="From (IATA Code)"
-            className="border border-black text-black rounded-lg px-4 py-2"
-          />
+          <div className="flex flex-row items-center border rounded-full px-4 py-2 flex-1">
+            <FaPlaneDeparture className="text-gray-400" />
+            <input
+              type="text"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              placeholder="From (IATA Code)"
+              className="border border-black text-black rounded-lg px-4 py-2"
+            />
+          </div>
 
           {/* Swap Button */}
           <button
@@ -181,28 +183,51 @@ export default function FlightSearchForm() {
           </button>
 
           {/* To Input */}
-          <input
-            type="text"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            placeholder="To (IATA Code)"
-            className="border border-black text-black rounded-lg px-4 py-2"
-          />
+          <div className="flex items-center border rounded-full px-4 py-2 flex-1">
+            <FaPlaneArrival className="text-gray-400" />
+            <input
+              type="text"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              placeholder="To (IATA Code)"
+              className="border border-black text-black rounded-lg px-4 py-2"
+            />
+          </div>
         </div>
 
         {/* Date Pickers */}
+           <div className="flex flex-row space-x-2">
+             <div className="flex items-center space-x-2 border-b pb-1">
+               <BsCalendar className="text-[#2C2C2C]" />
+             </div>
+             <div className="flex flex-col">
+               {" "}
+               <span className="font-medium text-sm text-[#2C2C2C]">
+                 Departure date
+               </span>
         <DatePicker
           selected={departureDate}
           onChange={(date) => setDepartureDate(date)}
           className="border-none text-black rounded-lg px-4 py-2"
-        />
-        {tripType === "Round trip" && (
+            />
+                </div>
+    
+            
+             <div className="flex items-center border-b pb-1">
+               <BsCalendar className="text-[#2C2C2C]" />
+             </div>
+             <div className="flex flex-col">
+               {" "}
+               <span className="font-medium text-sm text-[#2C2C2C]">
+                 Return date
+               </span>
           <DatePicker
             selected={returnDate}
             onChange={(date) => setReturnDate(date)}
             className="border-none text-black rounded-lg px-4 py-2"
           />
-        )}
+                 </div>
+        </div>
 
         {/* Divider */}
         <div className="border-l border-[#2C2C2C] h-12" />
