@@ -1,12 +1,10 @@
 "use client";
+import ResultModal from "../user-dashboard/airport/Result";
 
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { FaPlaneDeparture, FaPlaneArrival } from "react-icons/fa";
 import { Listbox } from "@headlessui/react";
-import { HiChevronDown } from "react-icons/hi";
-import { HiSwitchHorizontal } from "react-icons/hi";
-import { BsCalendar } from "react-icons/bs";
+import { HiChevronDown, HiSwitchHorizontal } from "react-icons/hi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaUserFriends } from "react-icons/fa";
@@ -18,10 +16,32 @@ export default function FlightSearchForm() {
   const [tripType, setTripType] = useState("Round trip");
   const [departureDate, setDepartureDate] = useState<Date | null>(new Date());
   const [returnDate, setReturnDate] = useState<Date | null>(new Date());
-  const [passengers] = useState({ adults: 1, children: 0 });
+  const [passengers, setPassengers] = useState({
+    adults: 1,
+    children: 0,
+  });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedClass, setSelectedClass] = useState("Economy");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Update Functions
+  const updateAdults = (value: number) => {
+    setPassengers((prev) => ({
+      ...prev,
+      adults: Math.max(1, value), // Ensure at least 1 adult
+    }));
+  };
+
+  const updateChildren = (value: number) => {
+    setPassengers((prev) => ({
+      ...prev,
+      children: Math.max(0, value), // Ensure at least 0 children
+    }));
+  };
 
   // Swap function for "From" and "To" locations
   const swapLocations = () => {
@@ -29,11 +49,62 @@ export default function FlightSearchForm() {
     setTo(from);
   };
 
+  // API Call Function
+ const searchFlights = async () => {
+   if (!from || !to) {
+     alert("Please enter both origin and destination");
+     return;
+   }
+
+   setLoading(true);
+
+   try {
+     const response = await fetch("/api/search-flight", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({
+         from,
+         to,
+         departureDate: departureDate?.toISOString(),
+         returnDate: returnDate?.toISOString(),
+         tripType,
+         passengers,
+         selectedClass,
+       }),
+     });
+
+     const data = await response.json();
+
+     if (!response.ok) {
+       throw new Error(data.error || "Error fetching flights");
+     }
+
+     if (!data?.data || data.data.length === 0) {
+       alert("No flights found for the selected criteria.");
+       return;
+     }
+
+     setResults(data);
+     setIsModalOpen(true);
+   } catch (error: unknown) {
+     console.error("Error fetching flights:", error);
+
+     let errorMessage = "Error fetching flights. Please try again.";
+
+     if (error instanceof Error) {
+       errorMessage = error.message;
+     }
+
+     alert(errorMessage);
+   }
+
+ };
+
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-3">
       {/* Trip Type Selection */}
       <div className="flex space-x-6">
-        {" "}
         <RadioGroup
           value={tripType}
           onChange={setTripType}
@@ -89,21 +160,17 @@ export default function FlightSearchForm() {
         </Listbox>
       </div>
 
+      {/* Flight Inputs */}
       <div className="flex flex-row">
-        {" "}
-        {/* Flight Inputs */}
         <div className="flex items-center space-x-2">
           {/* From Input */}
-          <div className="flex flex-row items-center border rounded-full px-4 py-2 flex-1">
-            <FaPlaneDeparture className="text-gray-400" />
-            <input
-              type="text"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              placeholder="From"
-              className="w-full px-4 py-2 text-gray-800 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            />
-          </div>
+          <input
+            type="text"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            placeholder="From (IATA Code)"
+            className="border border-black text-black rounded-lg px-4 py-2"
+          />
 
           {/* Swap Button */}
           <button
@@ -114,87 +181,104 @@ export default function FlightSearchForm() {
           </button>
 
           {/* To Input */}
-          <div className="flex items-center border rounded-full px-4 py-2 flex-1">
-            <FaPlaneArrival className="text-gray-400" />
-            <input
-              type="text"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-              placeholder="To"
-              className="w-full px-4 py-2 text-gray-800 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            />
-          </div>
+          <input
+            type="text"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            placeholder="To (IATA Code)"
+            className="border border-black text-black rounded-lg px-4 py-2"
+          />
         </div>
+
         {/* Date Pickers */}
-        <div className="flex items-center">
-          {/* Departure Date */}
-          <div className="flex flex-row space-x-2">
-            <div className="flex items-center space-x-2 border-b pb-1">
-              <BsCalendar className="text-[#2C2C2C]" />
-            </div>
-            <div className="flex flex-col">
-              {" "}
-              <span className="font-medium text-sm text-[#2C2C2C]">
-                Departure date
-              </span>
-              <DatePicker
-                selected={departureDate}
-                onChange={(date) => setDepartureDate(date)}
-                className="outline-none bg-transparent font-normal text-sm text-[#2C2C2C]"
-                dateFormat="dd MMM yyyy"
-              />
-            </div>
+        <DatePicker
+          selected={departureDate}
+          onChange={(date) => setDepartureDate(date)}
+          className="border-none text-black rounded-lg px-4 py-2"
+        />
+        {tripType === "Round trip" && (
+          <DatePicker
+            selected={returnDate}
+            onChange={(date) => setReturnDate(date)}
+            className="border-none text-black rounded-lg px-4 py-2"
+          />
+        )}
+
+        {/* Divider */}
+        <div className="border-l border-[#2C2C2C] h-12" />
+
+        <div className="relative">
+          {/* travelerType Display (Clickable to Open Dropdown) */}
+          <div
+            className="flex space-x-2 items-center cursor-pointer border border-gray-300 px-4 py-2 rounded-md"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <FaUserFriends className="text-[#2C2C2C]" />
+            <span className="text-gray-600">
+              {passengers.adults} Adult{passengers.adults > 1 ? "s" : ""} -{" "}
+              {passengers.children} Child{passengers.children > 1 ? "ren" : ""}
+            </span>
           </div>
 
-          {/* Divider */}
+          {/* Dropdown Modal (Appears Below the Span) */}
+          {isDropdownOpen && (
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-300 shadow-lg rounded-md p-4 z-10">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-700">Adults</span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => updateAdults(passengers.adults - 1)}
+                    className="bg-gray-200 text-black px-2 py-1 rounded-md"
+                  >
+                    -
+                  </button>
+                  <span>{passengers.adults}</span>
+                  <button
+                    onClick={() => updateAdults(passengers.adults + 1)}
+                    className="bg-gray-200 text-black px-2 py-1 rounded-md"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
 
-          <div className="border-l border-[#2C2C2C] h-12" />
-
-
-          <div className="flex flex-row space-x-2 ml-8">
-            <div className="flex items-center border-b pb-1">
-              <BsCalendar className="text-[#2C2C2C]" />
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700">Children</span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => updateChildren(passengers.children - 1)}
+                    className="bg-gray-200 text-black px-2 py-1 rounded-md"
+                  >
+                    -
+                  </button>
+                  <span>{passengers.children}</span>
+                  <button
+                    onClick={() => updateChildren(passengers.children + 1)}
+                    className="bg-gray-200 text-black px-2 py-1 rounded-md"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              {" "}
-              <span className="font-medium text-sm text-[#2C2C2C]">
-                Return date
-              </span>
-              <DatePicker
-                selected={returnDate}
-                onChange={(date) => setReturnDate(date)}
-                className="outline-none bg-transparent font-normal text-sm text-[#2C2C2C]"
-                dateFormat="dd MMM yyyy"
-              />
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-l border-[#2C2C2C] h-12" />
-
-          {/* Passenger Count */}
-          <div className="flex flex-row space-x-2 ml-8">
-            <div className="flex items-center border-b pb-1">
-              <FaUserFriends className="text-[#2C2C2C]" />
-            </div>
-            <div>
-              {" "}
-              <span className="text-gray-600">
-                {passengers.adults} Adult{passengers.adults > 1 ? "s" : ""} -{" "}
-                {passengers.children} Child
-                {passengers.children > 1 ? "ren" : ""}
-              </span>
-            </div>
-          </div>
+          )}
         </div>
+
         {/* Search Button */}
-        <div className="ml-3 items-center">
-          {" "}
-          <button className="bg-[#F05A1B] text-base font-medium text-white px-8 py-3 rounded-lg">
-            Search
-          </button>
-        </div>
+        <button
+          onClick={searchFlights}
+          className="bg-[#F05A1B] text-white px-6 py-2 rounded-lg"
+        >
+          {loading ? "Searching..." : "Search"}
+        </button>
       </div>
+
+      {/* Results Modal */}
+      <ResultModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        results={results}
+      />
     </div>
   );
 }

@@ -20,6 +20,8 @@ interface AuthFormProps {
   onSuccess?: () => void;
 }
 
+
+
 interface AuthFormInputs {
   fullName?: string;
   username?: string;
@@ -28,6 +30,12 @@ interface AuthFormInputs {
   password: string;
   confirmPassword?: string;
 }
+
+interface AmadeusAuthResponse {
+  access_token: string;
+  expires_in: number; 
+}
+
 
 export default function AuthForm({ isLogin, onSuccess }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
@@ -112,6 +120,8 @@ export default function AuthForm({ isLogin, onSuccess }: AuthFormProps) {
 
         dispatch(login({ token, user: formattedUser }));
 
+        await fetchAmadeusToken();
+
         toast.success("Redirecting to dashboard...");
         if (onSuccess) onSuccess();
 
@@ -147,6 +157,36 @@ export default function AuthForm({ isLogin, onSuccess }: AuthFormProps) {
       setLoading(false);
     }
   };
+
+const fetchAmadeusToken = async (): Promise<string | null> => {
+  try {
+    const response = await axios.post<AmadeusAuthResponse>(
+      `${process.env.NEXT_PUBLIC_AMADEUS_API_URL}/v1/security/oauth2/token`,
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: process.env.NEXT_PUBLIC_AMADEUS_CLIENT_ID!,
+        client_secret: process.env.NEXT_PUBLIC_AMADEUS_CLIENT_SECRET!,
+      }),
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+    );
+
+    const token = response.data.access_token;
+    const expiresAt = Date.now() + response.data.expires_in * 5 * 60 * 60 * 1000; 
+
+    localStorage.setItem("amadeus_token", token);
+    localStorage.setItem("amadeus_token_expiry", expiresAt.toString());
+
+    console.log("Amadeus Token Stored:", token);
+    return token;
+  } catch (error) {
+    console.error("Failed to fetch Amadeus token:", error);
+    return null;
+  }
+};
+
+
 
   return (
     <>

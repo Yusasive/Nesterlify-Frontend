@@ -167,9 +167,7 @@ const Footer = () => {
         </div>
         <div className="items-center">
           {" "}
-          <button className="bg-[#F05A1B] px-6 py-2 rounded-full">
-            Support
-          </button>
+          
         </div>
       </div>
 
